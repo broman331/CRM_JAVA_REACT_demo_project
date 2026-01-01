@@ -3,7 +3,14 @@ import { DollarSign, Users, Briefcase, Calendar } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { dashboardApi } from './dashboard-api';
 
-const StatCard = ({ title, value, icon: Icon, trend }: any) => (
+interface StatCardProps {
+    title: string;
+    value: string | number;
+    icon: React.ElementType;
+    trend: string;
+}
+
+const StatCard = ({ title, value, icon: Icon, trend }: StatCardProps) => (
     <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-400">{title}</CardTitle>

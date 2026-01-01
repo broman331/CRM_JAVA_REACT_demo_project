@@ -1,8 +1,9 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
-import { LayoutDashboard, Users, FolderKanban, CheckSquare, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, FolderKanban, CheckSquare, LogOut, Building2, LineChart, Shield } from 'lucide-react';
+import { useAuthStore } from '../features/auth/authStore';
 
-const NavItem = ({ to, icon: Icon, children }: { to: string; icon: any; children: React.ReactNode }) => {
+const NavItem = ({ to, icon: Icon, children }: { to: string; icon: React.ElementType; children: React.ReactNode }) => {
     const location = useLocation();
     const isActive = location.pathname.startsWith(to);
 
@@ -23,6 +24,15 @@ const NavItem = ({ to, icon: Icon, children }: { to: string; icon: any; children
 };
 
 export const MainLayout = () => {
+    const user = useAuthStore((state) => state.user);
+    const logout = useAuthStore((state) => state.logout);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
+
     return (
         <div className="flex min-h-screen bg-background text-slate-100">
             {/* Sidebar */}
@@ -32,12 +42,20 @@ export const MainLayout = () => {
                 </div>
                 <nav className="flex flex-col gap-1 p-4">
                     <NavItem to="/dashboard" icon={LayoutDashboard}>Dashboard</NavItem>
+                    <NavItem to="/companies" icon={Building2}>Companies</NavItem>
                     <NavItem to="/contacts" icon={Users}>Contacts</NavItem>
                     <NavItem to="/deals" icon={FolderKanban}>Deals</NavItem>
                     <NavItem to="/activities" icon={CheckSquare}>Activities</NavItem>
+                    <NavItem to="/analytics" icon={LineChart}>Analytics</NavItem>
+                    {user?.roles?.includes('ADMIN') && (
+                        <NavItem to="/admin" icon={Shield}>Admin</NavItem>
+                    )}
                 </nav>
                 <div className="absolute bottom-4 left-4 right-4">
-                    <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-400 hover:bg-surface hover:text-red-400 transition-colors">
+                    <button
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-400 hover:bg-surface hover:text-red-400 transition-colors"
+                    >
                         <LogOut className="h-4 w-4" />
                         Sign Out
                     </button>

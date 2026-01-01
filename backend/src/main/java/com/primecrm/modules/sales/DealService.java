@@ -13,18 +13,30 @@ public class DealService {
 
     private final DealRepository dealRepository;
 
+    public List<Deal> searchDeals(List<com.primecrm.core.search.SearchCriteria> criteriaList) {
+        if (criteriaList == null || criteriaList.isEmpty()) {
+            return getDealsByPipeline();
+        }
+        org.springframework.data.jpa.domain.Specification<Deal> spec = org.springframework.data.jpa.domain.Specification
+                .where(null);
+        for (com.primecrm.core.search.SearchCriteria criteria : criteriaList) {
+            spec = spec.and(new com.primecrm.core.search.BaseSpecification<>(criteria));
+        }
+        return dealRepository.findAll(spec);
+    }
+
     public List<Deal> getDealsByPipeline() {
         // For now, return all deals. Later filter by pipeline/stage.
         return dealRepository.findAll();
     }
 
     @Transactional
-    public Deal createDeal(Deal deal) {
+    public Deal createDeal(@lombok.NonNull Deal deal) {
         return dealRepository.save(deal);
     }
 
     @Transactional
-    public Deal updateStage(UUID dealId, Deal.DealStage stage) {
+    public Deal updateStage(@lombok.NonNull UUID dealId, Deal.DealStage stage) {
         Deal deal = dealRepository.findById(dealId)
                 .orElseThrow(() -> new IllegalArgumentException("Deal not found"));
         deal.setStage(stage);
@@ -33,6 +45,14 @@ public class DealService {
 
     public long countDeals() {
         return dealRepository.count();
+    }
+
+    @Transactional
+    public void deleteDeal(@lombok.NonNull UUID id) {
+        if (!dealRepository.existsById(id)) {
+            throw new IllegalArgumentException("Deal not found");
+        }
+        dealRepository.deleteById(id);
     }
 
     public java.math.BigDecimal calculateTotalRevenue() {

@@ -23,8 +23,13 @@ export const activitiesApi = {
         return response.data;
     },
 
-    complete: async (id: string): Promise<Activity> => {
-        const response = await api.patch(`/activities/${id}/complete`);
+    completeActivity: async (id: string) => {
+        const response = await api.put(`/activities/${id}/complete`);
         return response.data;
-    }
+    },
+
+    getTimeline: async (entityType: 'contact' | 'deal', entityId: string) => {
+        const response = await api.get(`/timeline/${entityType}/${entityId}`);
+        return response.data;
+    },
 };

@@ -27,7 +27,7 @@ export const ActivitiesPage = () => {
     });
 
     const completeMutation = useMutation({
-        mutationFn: activitiesApi.complete,
+        mutationFn: activitiesApi.completeActivity,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['activities'] });
             toast.success('Activity completed');

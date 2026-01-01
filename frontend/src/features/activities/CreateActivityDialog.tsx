@@ -1,10 +1,11 @@
+
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { activitiesApi, type Activity } from './activities-api';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
-import { X, Calendar as CalendarIcon, Clock, Type } from 'lucide-react';
+import { X, Type } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface CreateActivityDialogProps {

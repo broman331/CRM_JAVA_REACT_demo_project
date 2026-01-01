@@ -15,6 +15,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
+    @SuppressWarnings("null")
     public User register(String firstName, String lastName, String email, String password) {
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email already in use");

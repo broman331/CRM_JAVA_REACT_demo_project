@@ -6,7 +6,6 @@ import org.springframework.modulith.Modulith;
 
 @SpringBootApplication
 @Modulith
-@org.springframework.data.jpa.repository.config.EnableJpaAuditing
 public class PrimeCrmApplication {
 
 	public static void main(String[] args) {

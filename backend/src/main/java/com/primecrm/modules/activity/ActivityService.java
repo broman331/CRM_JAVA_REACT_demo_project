@@ -26,12 +26,12 @@ public class ActivityService {
     }
 
     @Transactional
-    public Activity createActivity(Activity activity) {
+    public Activity createActivity(@lombok.NonNull Activity activity) {
         return activityRepository.save(activity);
     }
 
     @Transactional
-    public Activity completeActivity(UUID id) {
+    public Activity completeActivity(@lombok.NonNull UUID id) {
         Activity activity = activityRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Activity not found"));
         activity.setCompleted(true);

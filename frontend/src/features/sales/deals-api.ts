@@ -9,8 +9,9 @@ export interface Deal {
 }
 
 export const dealsApi = {
-    getDeals: async () => {
-        const response = await api.get<Deal[]>('/deals');
+    getDeals: async (search?: string) => {
+        const params = search ? { search } : {};
+        const response = await api.get<Deal[]>('/deals', { params });
         return response.data;
     },
 
@@ -20,7 +21,11 @@ export const dealsApi = {
     },
 
     updateStage: async (id: string, stage: string) => {
-        const response = await api.patch(`/deals/${id}/stage`, { stage });
+        const response = await api.patch(`/deals/${id}/stage`, null, { params: { stage } }); // Fix param passing
         return response.data;
+    },
+
+    deleteDeal: async (id: string) => {
+        await api.delete(`/deals/${id}`);
     }
 };

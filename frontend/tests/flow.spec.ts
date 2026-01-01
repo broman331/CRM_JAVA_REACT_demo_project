@@ -3,7 +3,6 @@ import { test, expect } from '@playwright/test';
 test('User can register, login, and navigate', async ({ page }) => {
     const email = `testuser-${Date.now()}@example.com`;
     const password = 'password123';
-    const name = 'Test User';
 
     // 1. Register
     await page.goto('/register');

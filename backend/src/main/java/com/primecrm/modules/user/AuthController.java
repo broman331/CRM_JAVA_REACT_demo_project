@@ -38,13 +38,14 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.email(), request.password()));
         var userDetails = (org.springframework.security.core.userdetails.UserDetails) authentication.getPrincipal();
         var token = jwtService.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthResponse(token));
+        var user = userService.findByEmail(request.email());
+        return ResponseEntity.ok(new AuthResponse(token, user));
     }
 
     public record LoginRequest(@Email @NotBlank String email, @NotBlank String password) {
     }
 
-    public record AuthResponse(String token) {
+    public record AuthResponse(String token, User user) {
     }
 
     public record RegisterRequest(
