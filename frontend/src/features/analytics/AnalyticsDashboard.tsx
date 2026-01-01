@@ -57,7 +57,7 @@ export const AnalyticsDashboard = () => {
                                 cx="50%"
                                 cy="50%"
                                 labelLine={false}
-                                label={({ percent, cx, cy }: any) => (
+                                label={({ percent, cx, cy }: { percent?: number; cx: number; cy: number }) => (
                                     <text x={cx} y={cy} dy={8} textAnchor="middle" fill="#94a3b8">
                                         {pipelineChartData.length > 0 ? `${((percent || 0) * 100).toFixed(0)}%` : '0%'}
                                     </text>

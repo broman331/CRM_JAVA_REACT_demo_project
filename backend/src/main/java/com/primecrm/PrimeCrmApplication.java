@@ -6,6 +6,7 @@ import org.springframework.modulith.Modulith;
 
 @SpringBootApplication
 @Modulith
+@org.springframework.cache.annotation.EnableCaching
 public class PrimeCrmApplication {
 
 	public static void main(String[] args) {

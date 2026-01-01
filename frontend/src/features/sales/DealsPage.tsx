@@ -8,6 +8,7 @@ import { dealsApi, type Deal } from './deals-api';
 import { useAuthStore } from '../auth/authStore';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { toast } from 'sonner';
+import { AddDealDialog } from './AddDealDialog';
 
 const COLUMNS = [
     { id: 'LEAD', title: 'Lead' },
@@ -22,6 +23,7 @@ export const DealsPage = () => {
     const user = useAuthStore((state) => state.user);
     const [minValue, setMinValue] = useState('');
     const [stageFilter, setStageFilter] = useState('');
+    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
     const searchParams = [];
     if (minValue) searchParams.push(`value > ${minValue} `);
@@ -82,12 +84,13 @@ export const DealsPage = () => {
 
     return (
         <div className="h-[calc(100vh-8rem)] flex flex-col space-y-6">
+            <AddDealDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} />
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-2xl font-bold tracking-tight text-white shadow-sm">Deals Pipeline</h2>
                     <p className="text-slate-400">Track and manage your opportunities.</p>
                 </div>
-                <Button onClick={() => toast.info('New Deal feature coming soon')}>
+                <Button onClick={() => setIsAddDialogOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" />
                     New Deal
                 </Button>
