@@ -38,6 +38,16 @@ A Modular Monolith CRM application built with **Spring Boot** (Backend) and **Re
     - **Lazy Loading**: Route-based code splitting using `React.lazy` and `Suspense`.
     - **Bundle Optimization**: Minimized initial load size.
     - **Benchmarks**: Page Load < 150ms, FCP < 500ms.
+    
+### **Missing Features & Polish (Phase 6)**
+- **Admin User Management**:
+    - Full CRUD for users with RBAC.
+    - Secure password handling and role assignment.
+- **Actions Menus**: Unified Edit/Delete actions for all entities.
+- **Improved UX**:
+    - Debounced search for better performance.
+    - Toast notifications for all actions.
+    - Skeleton loaders for smooth data fetching.
 
 ---
 
@@ -116,7 +126,7 @@ cd backend
 ```
 
 ### **Frontend & E2E Tests**
-Run Playwright tests for end-to-end flows:
+Run Playwright tests for end-to-end flows (Total: **91** tests passing):
 ```bash
 cd frontend
 npx playwright test
