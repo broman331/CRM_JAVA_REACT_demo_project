@@ -5,7 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import org.springframework.lang.NonNull;
+
 import java.util.Collections;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +39,32 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Transactional
+    public User updateUser(@NonNull UUID id, String firstName, String lastName, String email,
+            Set<User.UserRole> roles) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (!user.getEmail().equals(email) && userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email already in use");
+        }
+
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setRoles(roles);
+
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUser(@NonNull UUID id) {
+        userRepository.deleteById(id);
     }
 }

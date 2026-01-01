@@ -2,13 +2,14 @@
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useState } from 'react';
-import { Plus, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { dealsApi, type Deal } from './deals-api';
 import { useAuthStore } from '../auth/authStore';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { toast } from 'sonner';
 import { AddDealDialog } from './AddDealDialog';
+import { ActionsMenu } from '../../components/ui/ActionsMenu';
 
 const COLUMNS = [
     { id: 'LEAD', title: 'Lead' },
@@ -153,24 +154,12 @@ export const DealsPage = () => {
                                                 <span className="text-xs font-medium text-primary-light bg-primary/10 px-2 py-0.5 rounded">
                                                     {deal.companyName || 'Lead'}
                                                 </span>
-                                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    {user?.roles?.includes('ADMIN') && (
-                                                        <button
-                                                            className="text-red-400 hover:text-red-300 p-1"
-                                                            title="Delete deal"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                if (window.confirm('Delete deal?')) {
-                                                                    deleteMutation.mutate(deal.id);
-                                                                }
-                                                            }}
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </button>
-                                                    )}
-                                                    <button className="text-slate-500 hover:text-white p-1">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </button>
+                                                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <ActionsMenu
+                                                        itemName="Deal"
+                                                        onEdit={() => toast.info('Edit coming soon')}
+                                                        onDelete={user?.roles?.includes('ADMIN') ? () => deleteMutation.mutate(deal.id) : undefined}
+                                                    />
                                                 </div>
                                             </div>
                                             <h4 className="font-medium leading-tight text-white">{deal.title}</h4>

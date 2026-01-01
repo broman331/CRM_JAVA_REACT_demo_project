@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { activitiesApi, type Activity } from './activities-api';
@@ -8,24 +7,34 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Ca
 import { X, Type } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface CreateActivityDialogProps {
+interface ActivityDialogProps {
     isOpen: boolean;
     onClose: () => void;
+    initialData?: Activity | null;
 }
 
-export const CreateActivityDialog = ({ isOpen, onClose }: CreateActivityDialogProps) => {
+export const ActivityDialog = ({ isOpen, onClose, initialData }: ActivityDialogProps) => {
     const queryClient = useQueryClient();
     const [isLoading, setIsLoading] = useState(false);
 
+    // Reset form when opening/closing or changing initialData would be handled by key prop or manual effect if needed.
+    // simpler to just letting the form be uncontrolled with defaultValues or manual value controlled.
+    // For simplicity, we'll use uncontrolled form with key to reset.
+
     const mutation = useMutation({
-        mutationFn: activitiesApi.create,
+        mutationFn: (data: Partial<Activity>) => {
+            if (initialData?.id) {
+                return activitiesApi.update(initialData.id, data);
+            }
+            return activitiesApi.create(data);
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['activities'] });
-            toast.success('Activity created successfully');
+            toast.success(initialData ? 'Activity updated' : 'Activity created');
             onClose();
         },
         onError: () => {
-            toast.error('Failed to create activity');
+            toast.error(initialData ? 'Failed to update activity' : 'Failed to create activity');
         }
     });
 
@@ -38,8 +47,8 @@ export const CreateActivityDialog = ({ isOpen, onClose }: CreateActivityDialogPr
             subject: formData.get('subject') as string,
             description: formData.get('description') as string,
             type: formData.get('type') as Activity['type'],
-            dueDate: new Date(formData.get('dueDate') as string).toISOString(), // Naive conversion for now
-            completed: false
+            dueDate: new Date(formData.get('dueDate') as string).toISOString(),
+            completed: initialData?.completed ?? false
         };
 
         mutation.mutate(data);
@@ -47,6 +56,10 @@ export const CreateActivityDialog = ({ isOpen, onClose }: CreateActivityDialogPr
     };
 
     if (!isOpen) return null;
+
+    const defaultDate = initialData?.dueDate
+        ? new Date(initialData.dueDate).toISOString().slice(0, 16)
+        : '';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -58,13 +71,14 @@ export const CreateActivityDialog = ({ isOpen, onClose }: CreateActivityDialogPr
                     <X className="h-4 w-4" />
                 </button>
                 <CardHeader>
-                    <CardTitle>New Activity</CardTitle>
+                    <CardTitle>{initialData ? 'Edit Activity' : 'New Activity'}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <Input
                             label="Subject"
                             name="subject"
+                            defaultValue={initialData?.subject}
                             placeholder="Call with Client X"
                             required
                             autoFocus
@@ -75,6 +89,7 @@ export const CreateActivityDialog = ({ isOpen, onClose }: CreateActivityDialogPr
                             <div className="relative">
                                 <select
                                     name="type"
+                                    defaultValue={initialData?.type || 'CALL'}
                                     className="flex h-10 w-full rounded-md border border-slate-700 bg-surface px-3 py-2 text-sm text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none"
                                 >
                                     <option value="CALL">Call</option>
@@ -93,6 +108,7 @@ export const CreateActivityDialog = ({ isOpen, onClose }: CreateActivityDialogPr
                                 <input
                                     type="datetime-local"
                                     name="dueDate"
+                                    defaultValue={defaultDate}
                                     required
                                     className="flex h-10 w-full rounded-md border border-slate-700 bg-surface px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary md:w-full [&::-webkit-calendar-picker-indicator]:invert"
                                 />
@@ -102,12 +118,15 @@ export const CreateActivityDialog = ({ isOpen, onClose }: CreateActivityDialogPr
                         <Input
                             label="Description"
                             name="description"
+                            defaultValue={initialData?.description}
                             placeholder="Details about this task..."
                         />
 
                         <div className="flex justify-end gap-2 mt-6">
                             <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
-                            <Button type="submit" isLoading={isLoading}>Create Activity</Button>
+                            <Button type="submit" isLoading={isLoading}>
+                                {initialData ? 'Save Changes' : 'Create Activity'}
+                            </Button>
                         </div>
                     </form>
                 </CardContent>

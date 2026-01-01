@@ -56,6 +56,10 @@ export const crmApi = {
         const response = await api.get(`/companies/${id}`);
         return response.data;
     },
+    deleteCompany: async (id: string) => {
+        const response = await api.delete(`/companies/${id}`);
+        return response.data;
+    },
 };
 
 export const analyticsApi = {

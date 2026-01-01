@@ -23,6 +23,15 @@ export const activitiesApi = {
         return response.data;
     },
 
+    update: async (id: string, activity: Partial<Activity>): Promise<Activity> => {
+        const response = await api.put(`/activities/${id}`, activity);
+        return response.data;
+    },
+
+    delete: async (id: string) => {
+        await api.delete(`/activities/${id}`);
+    },
+
     completeActivity: async (id: string) => {
         const response = await api.put(`/activities/${id}/complete`);
         return response.data;

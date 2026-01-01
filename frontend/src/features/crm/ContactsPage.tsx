@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Plus, Search, MoreHorizontal, Mail, Trash2, ChevronDown, ChevronRight, History } from 'lucide-react';
+import { Plus, Search, Mail, ChevronDown, ChevronRight, History } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { crmApi } from './crm-api';
 import { activitiesApi } from '../activities/activities-api';
@@ -12,6 +12,7 @@ import { Timeline } from '../../components/ui/Timeline';
 import { toast } from 'sonner';
 import { cn } from '../../lib/utils';
 import { AddContactDialog } from './AddContactDialog';
+import { ActionsMenu } from '../../components/ui/ActionsMenu';
 
 export const ContactsPage = () => {
     const [search, setSearch] = useState('');
@@ -131,25 +132,11 @@ export const ContactsPage = () => {
                                                     </div>
                                                 </td>
                                                 <td className="p-4 align-middle text-right">
-                                                    <div className="flex justify-end gap-2">
-                                                        {user?.roles?.includes('ADMIN') && (
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => {
-                                                                    if (window.confirm('Delete this contact?')) {
-                                                                        deleteMutation.mutate(contact.id);
-                                                                    }
-                                                                }}
-                                                                className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
-                                                            >
-                                                                <Trash2 className="h-4 w-4" />
-                                                            </Button>
-                                                        )}
-                                                        <Button variant="ghost" size="sm">
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                        </Button>
-                                                    </div>
+                                                    <ActionsMenu
+                                                        itemName="Contact"
+                                                        onEdit={() => toast.info('Edit coming soon')}
+                                                        onDelete={user?.roles?.includes('ADMIN') ? () => deleteMutation.mutate(contact.id) : undefined}
+                                                    />
                                                 </td>
                                             </tr>
                                             {expandedContactId === contact.id && (

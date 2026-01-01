@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { api } from '../src/lib/api';
 
 test.describe('CRUD Operations', () => {
     test.beforeEach(async ({ page }) => {

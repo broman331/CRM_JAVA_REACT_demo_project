@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { dealsApi } from './deals-api';
-import { crmApi } from '../crm/crm-api';
+import { crmApi, type Contact } from '../crm/crm-api';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import {
@@ -114,7 +114,7 @@ export const AddDealDialog = ({ open, onOpenChange }: AddDealDialogProps) => {
                             {...register('contactId')}
                         >
                             <option value="">Select a contact</option>
-                            {contacts?.map((contact: any) => (
+                            {contacts?.map((contact: Contact) => (
                                 <option key={contact.id} value={contact.id}>
                                     {contact.firstName} {contact.lastName}
                                 </option>

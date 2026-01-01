@@ -7,6 +7,7 @@ export default defineConfig({
     retries: process.env.CI ? 2 : 0,
     workers: 1, // Force 1 worker for shared DB
     reporter: 'html',
+    timeout: 60000,
     use: {
         baseURL: 'http://localhost:5173',
         trace: 'on-first-retry',

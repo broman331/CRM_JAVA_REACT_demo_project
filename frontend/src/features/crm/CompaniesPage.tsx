@@ -2,18 +2,35 @@ import { useState } from 'react';
 import { Card, CardContent } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Plus, Search, MoreHorizontal, Globe, Phone, Building2, Loader2 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { Plus, Search, Globe, Phone, Building2, Loader2 } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { crmApi, type Company } from './crm-api';
 import { AddCompanyDialog } from './AddCompanyDialog';
+import { ActionsMenu } from '../../components/ui/ActionsMenu';
+import { toast } from 'sonner';
+import { useAuthStore } from '../auth/authStore';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export const CompaniesPage = () => {
     const [search, setSearch] = useState('');
+    const debouncedSearch = useDebounce(search, 500);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const queryClient = useQueryClient();
+    const user = useAuthStore((state) => state.user);
 
     const { data: companies, isLoading, error } = useQuery<Company[]>({
-        queryKey: ['companies', search],
-        queryFn: () => crmApi.getCompanies(search),
+        queryKey: ['companies', debouncedSearch],
+        queryFn: () => crmApi.getCompanies(debouncedSearch),
+        placeholderData: keepPreviousData
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: (id: string) => crmApi.deleteCompany(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['companies'] });
+            toast.success('Company deleted');
+        },
+        onError: () => toast.error('Failed to delete company')
     });
 
     if (isLoading) return <div className="flex justify-center p-8"><Loader2 className="animate-spin text-primary" /></div>;
@@ -95,9 +112,11 @@ export const CompaniesPage = () => {
                                             ) : '-'}
                                         </td>
                                         <td className="p-4 align-middle text-right">
-                                            <Button variant="ghost" size="sm">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                            </Button>
+                                            <ActionsMenu
+                                                itemName="Company"
+                                                onEdit={() => toast.info('Edit coming soon')}
+                                                onDelete={user?.roles?.includes('ADMIN') ? () => deleteMutation.mutate(company.id) : undefined}
+                                            />
                                         </td>
                                     </tr>
                                 ))}
