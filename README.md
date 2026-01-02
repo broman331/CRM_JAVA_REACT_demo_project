@@ -1,5 +1,8 @@
 # PrimeCRM (Demo Project)
 
+> [!WARNING]
+> **BROKEN STATE**: Phase 7 changes have broken the application, specifically the dashboard functionality. This will be fixed at a later date.
+
 A Modular Monolith CRM application built with **Spring Boot** (Backend) and **React** (Frontend).
 
 ## 🚀 Features
