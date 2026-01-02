@@ -8,7 +8,7 @@ import { dealsApi, type Deal } from './deals-api';
 import { useAuthStore } from '../auth/authStore';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { toast } from 'sonner';
-import { AddDealDialog } from './AddDealDialog';
+import { DealDialog } from './DealDialog';
 import { ActionsMenu } from '../../components/ui/ActionsMenu';
 
 const COLUMNS = [
@@ -24,7 +24,8 @@ export const DealsPage = () => {
     const user = useAuthStore((state) => state.user);
     const [minValue, setMinValue] = useState('');
     const [stageFilter, setStageFilter] = useState('');
-    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
 
     const searchParams = [];
     if (minValue) searchParams.push(`value > ${minValue} `);
@@ -59,6 +60,16 @@ export const DealsPage = () => {
         }
     });
 
+    const handleAdd = () => {
+        setSelectedDeal(null);
+        setIsDialogOpen(true);
+    };
+
+    const handleEdit = (deal: Deal) => {
+        setSelectedDeal(deal);
+        setIsDialogOpen(true);
+    };
+
     if (error) {
         toast.error('Error loading deals');
         return <div className="text-red-500 p-8 text-center">Failed to load deals. Please try again.</div>;
@@ -85,13 +96,17 @@ export const DealsPage = () => {
 
     return (
         <div className="h-[calc(100vh-8rem)] flex flex-col space-y-6">
-            <AddDealDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} />
+            <DealDialog
+                open={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                dealToEdit={selectedDeal}
+            />
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-2xl font-bold tracking-tight text-white shadow-sm">Deals Pipeline</h2>
                     <p className="text-slate-400">Track and manage your opportunities.</p>
                 </div>
-                <Button onClick={() => setIsAddDialogOpen(true)}>
+                <Button onClick={handleAdd}>
                     <Plus className="mr-2 h-4 w-4" />
                     New Deal
                 </Button>
@@ -157,14 +172,14 @@ export const DealsPage = () => {
                                                 <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <ActionsMenu
                                                         itemName="Deal"
-                                                        onEdit={() => toast.info('Edit coming soon')}
+                                                        onEdit={() => handleEdit(deal)}
                                                         onDelete={user?.roles?.includes('ADMIN') ? () => deleteMutation.mutate(deal.id) : undefined}
                                                     />
                                                 </div>
                                             </div>
                                             <h4 className="font-medium leading-tight text-white">{deal.title}</h4>
                                             <div className="text-sm font-semibold text-slate-300">
-                                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(deal.value))}
+                                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(deal.value)}
                                             </div>
                                         </div>
                                     ))

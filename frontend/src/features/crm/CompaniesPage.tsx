@@ -5,7 +5,7 @@ import { Input } from '../../components/ui/Input';
 import { Plus, Search, Globe, Phone, Building2, Loader2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { crmApi, type Company } from './crm-api';
-import { AddCompanyDialog } from './AddCompanyDialog';
+import { CompanyDialog } from './CompanyDialog';
 import { ActionsMenu } from '../../components/ui/ActionsMenu';
 import { toast } from 'sonner';
 import { useAuthStore } from '../auth/authStore';
@@ -14,7 +14,8 @@ import { useDebounce } from '../../hooks/useDebounce';
 export const CompaniesPage = () => {
     const [search, setSearch] = useState('');
     const debouncedSearch = useDebounce(search, 500);
-    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
     const queryClient = useQueryClient();
     const user = useAuthStore((state) => state.user);
 
@@ -41,15 +42,29 @@ export const CompaniesPage = () => {
         company.industry?.toLowerCase().includes(search.toLowerCase())
     );
 
+    const handleAdd = () => {
+        setSelectedCompany(null);
+        setIsDialogOpen(true);
+    };
+
+    const handleEdit = (company: Company) => {
+        setSelectedCompany(company);
+        setIsDialogOpen(true);
+    };
+
     return (
         <div className="space-y-6">
-            <AddCompanyDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} />
+            <CompanyDialog
+                open={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                companyToEdit={selectedCompany}
+            />
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-2xl font-bold tracking-tight text-white shadow-sm">Companies</h2>
                     <p className="text-slate-400">Manage your business accounts and partners.</p>
                 </div>
-                <Button onClick={() => setIsAddDialogOpen(true)}>
+                <Button onClick={handleAdd}>
                     <Plus className="mr-2 h-4 w-4" />
                     Add Company
                 </Button>
@@ -114,7 +129,7 @@ export const CompaniesPage = () => {
                                         <td className="p-4 align-middle text-right">
                                             <ActionsMenu
                                                 itemName="Company"
-                                                onEdit={() => toast.info('Edit coming soon')}
+                                                onEdit={() => handleEdit(company)}
                                                 onDelete={user?.roles?.includes('ADMIN') ? () => deleteMutation.mutate(company.id) : undefined}
                                             />
                                         </td>

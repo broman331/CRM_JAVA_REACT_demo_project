@@ -19,6 +19,10 @@ public class ContactController {
 
     @GetMapping
     public ResponseEntity<List<Contact>> getAllContacts(@RequestParam(required = false) String search) {
+        if (search != null && !search.isEmpty() && !search.contains(":") && !search.contains(">")
+                && !search.contains("<")) {
+            return ResponseEntity.ok(contactService.searchGlobal(search));
+        }
         List<SearchCriteria> criteria = SearchCriteria.parse(search);
         return ResponseEntity.ok(contactService.searchContacts(criteria));
     }
@@ -31,6 +35,11 @@ public class ContactController {
     @PostMapping
     public ResponseEntity<Contact> createContact(@RequestBody @Valid Contact contact) {
         return ResponseEntity.ok(contactService.createContact(contact));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Contact> updateContact(@PathVariable UUID id, @RequestBody @Valid Contact contact) {
+        return ResponseEntity.ok(contactService.updateContact(id, contact));
     }
 
     @DeleteMapping("/{id}")

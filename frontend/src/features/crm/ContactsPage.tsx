@@ -4,26 +4,27 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Plus, Search, Mail, ChevronDown, ChevronRight, History } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { crmApi } from './crm-api';
+import { crmApi, type Contact } from './crm-api';
 import { activitiesApi } from '../activities/activities-api';
 import { useAuthStore } from '../auth/authStore';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { Timeline } from '../../components/ui/Timeline';
 import { toast } from 'sonner';
 import { cn } from '../../lib/utils';
-import { AddContactDialog } from './AddContactDialog';
+import { ContactDialog } from './ContactDialog';
 import { ActionsMenu } from '../../components/ui/ActionsMenu';
 
 export const ContactsPage = () => {
     const [search, setSearch] = useState('');
     const [expandedContactId, setExpandedContactId] = useState<string | null>(null);
-    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
     const user = useAuthStore((state) => state.user);
     const queryClient = useQueryClient();
 
     const { data: contacts, isLoading, error } = useQuery({
         queryKey: ['contacts', search],
-        queryFn: () => crmApi.getContacts(search ? `firstName:${search}` : undefined),
+        queryFn: () => crmApi.getContacts(search || undefined),
     });
 
     const deleteMutation = useMutation({
@@ -41,6 +42,16 @@ export const ContactsPage = () => {
         setExpandedContactId(expandedContactId === id ? null : id);
     };
 
+    const handleAdd = () => {
+        setSelectedContact(null);
+        setIsDialogOpen(true);
+    };
+
+    const handleEdit = (contact: Contact) => {
+        setSelectedContact(contact);
+        setIsDialogOpen(true);
+    };
+
     if (error) {
         toast.error('Error loading contacts');
         return <div className="text-red-500 p-8 text-center">Failed to load contacts. Please try again.</div>;
@@ -48,13 +59,17 @@ export const ContactsPage = () => {
 
     return (
         <div className="space-y-6">
-            <AddContactDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} />
+            <ContactDialog
+                open={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                contactToEdit={selectedContact}
+            />
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-2xl font-bold tracking-tight text-white shadow-sm">Contacts</h2>
                     <p className="text-slate-400">Manage your relationships and leads.</p>
                 </div>
-                <Button onClick={() => setIsAddDialogOpen(true)}>
+                <Button onClick={handleAdd}>
                     <Plus className="mr-2 h-4 w-4" />
                     Add Contact
                 </Button>
@@ -134,7 +149,7 @@ export const ContactsPage = () => {
                                                 <td className="p-4 align-middle text-right">
                                                     <ActionsMenu
                                                         itemName="Contact"
-                                                        onEdit={() => toast.info('Edit coming soon')}
+                                                        onEdit={() => handleEdit(contact)}
                                                         onDelete={user?.roles?.includes('ADMIN') ? () => deleteMutation.mutate(contact.id) : undefined}
                                                     />
                                                 </td>

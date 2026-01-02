@@ -4,6 +4,7 @@ import { generateActivity } from './utils/seeds';
 
 test.describe('Timeline API', () => {
     let apiContext: APIRequestContext;
+    let userId: string;
 
     test.beforeAll(async () => {
         await resetDatabase();

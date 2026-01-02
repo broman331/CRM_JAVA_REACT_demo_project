@@ -21,7 +21,6 @@ public class DashboardController {
     private final DealService dealService;
 
     @GetMapping("/stats")
-    @org.springframework.cache.annotation.Cacheable("dashboardStats")
     public ResponseEntity<Map<String, Object>> getDashboardStats() {
         long contactCount = contactService.countContacts();
         long dealCount = dealService.countDeals();

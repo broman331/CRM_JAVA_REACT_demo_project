@@ -28,6 +28,10 @@ public class ContactService {
         return contactRepository.findAll(spec);
     }
 
+    public List<Contact> searchGlobal(String query) {
+        return contactRepository.searchGlobal(query);
+    }
+
     public List<Contact> getAllContacts() {
         return contactRepository.findAll();
     }
@@ -44,6 +48,24 @@ public class ContactService {
 
     public long countContacts() {
         return contactRepository.count();
+    }
+
+    @Transactional
+    public Contact updateContact(@lombok.NonNull UUID id, @lombok.NonNull Contact contact) {
+        Contact existing = getContact(id);
+        if (contact.getFirstName() != null)
+            existing.setFirstName(contact.getFirstName());
+        if (contact.getLastName() != null)
+            existing.setLastName(contact.getLastName());
+        if (contact.getEmail() != null)
+            existing.setEmail(contact.getEmail());
+        if (contact.getPhone() != null)
+            existing.setPhone(contact.getPhone());
+        if (contact.getJobTitle() != null)
+            existing.setJobTitle(contact.getJobTitle());
+        if (contact.getCompany() != null)
+            existing.setCompany(contact.getCompany());
+        return java.util.Objects.requireNonNull(contactRepository.save(existing));
     }
 
     @Transactional

@@ -1,0 +1,113 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e6]: PrimeCRM
+      - navigation [ref=e7]:
+        - link "Dashboard" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e9]
+          - text: Dashboard
+        - link "Companies" [ref=e14] [cursor=pointer]:
+          - /url: /companies
+          - img [ref=e15]
+          - text: Companies
+        - link "Contacts" [ref=e19] [cursor=pointer]:
+          - /url: /contacts
+          - img [ref=e20]
+          - text: Contacts
+        - link "Deals" [ref=e25] [cursor=pointer]:
+          - /url: /deals
+          - img [ref=e26]
+          - text: Deals
+        - link "Activities" [ref=e28] [cursor=pointer]:
+          - /url: /activities
+          - img [ref=e29]
+          - text: Activities
+        - link "Analytics" [ref=e32] [cursor=pointer]:
+          - /url: /analytics
+          - img [ref=e33]
+          - text: Analytics
+        - link "Admin" [ref=e36] [cursor=pointer]:
+          - /url: /admin
+          - img [ref=e37]
+          - text: Admin
+      - button "Sign Out" [ref=e40]:
+        - img [ref=e41]
+        - text: Sign Out
+    - main [ref=e44]:
+      - generic [ref=e45]:
+        - heading "Dashboard" [level=1] [ref=e46]
+        - generic [ref=e48]: JD
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - heading "Activities" [level=2] [ref=e53]
+            - paragraph [ref=e54]: Manage your daily tasks and interactions.
+          - button "+ New Activity" [ref=e55]
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - heading "Upcoming" [level=3] [ref=e59]:
+              - img [ref=e60]
+              - text: Upcoming
+            - generic [ref=e62]:
+              - generic [ref=e63]:
+                - button [ref=e64]:
+                  - img [ref=e65]
+                - generic [ref=e67]:
+                  - generic [ref=e68]:
+                    - generic [ref=e69]:
+                      - img [ref=e70]
+                      - generic [ref=e72]: First Activity
+                    - button "Open menu" [ref=e74]:
+                      - generic [ref=e75]: Open menu
+                      - img [ref=e76]
+                  - paragraph [ref=e80]: Discuss project
+                  - paragraph [ref=e81]: "Due: January 1st, 2026 4:55 PM"
+              - generic [ref=e82]:
+                - button [ref=e83]:
+                  - img [ref=e84]
+                - generic [ref=e86]:
+                  - generic [ref=e87]:
+                    - generic [ref=e88]:
+                      - img [ref=e89]
+                      - generic [ref=e91]: Second Activity
+                    - button "Open menu" [ref=e93]:
+                      - generic [ref=e94]: Open menu
+                      - img [ref=e95]
+                  - paragraph [ref=e99]: Discuss project
+                  - paragraph [ref=e100]: "Due: January 1st, 2026 4:55 PM"
+              - generic [ref=e101]:
+                - button [ref=e102]:
+                  - img [ref=e103]
+                - generic [ref=e105]:
+                  - generic [ref=e106]:
+                    - generic [ref=e107]:
+                      - img [ref=e108]
+                      - generic [ref=e110]: Deal Activity
+                    - button "Open menu" [ref=e112]:
+                      - generic [ref=e113]: Open menu
+                      - img [ref=e114]
+                  - paragraph [ref=e118]: Discuss project
+                  - paragraph [ref=e119]: "Due: January 1st, 2026 4:55 PM"
+              - generic [ref=e120]:
+                - button [ref=e121]:
+                  - img [ref=e122]
+                - generic [ref=e124]:
+                  - generic [ref=e125]:
+                    - generic [ref=e126]:
+                      - img [ref=e127]
+                      - generic [ref=e129]: Delete Me Activity
+                    - button "Open menu" [ref=e131]:
+                      - generic [ref=e132]: Open menu
+                      - img [ref=e133]
+                  - paragraph [ref=e137]: "Due: January 1st, 2026 2:58 PM"
+          - generic [ref=e138]:
+            - heading "Completed" [level=3] [ref=e140]:
+              - img [ref=e141]
+              - text: Completed
+            - paragraph [ref=e145]: No completed activities.
+  - region "Notifications alt+T"
+```

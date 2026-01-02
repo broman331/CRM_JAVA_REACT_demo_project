@@ -1,0 +1,64 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e6]: PrimeCRM
+      - navigation [ref=e7]:
+        - link "Dashboard" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e9]
+          - text: Dashboard
+        - link "Companies" [ref=e14] [cursor=pointer]:
+          - /url: /companies
+          - img [ref=e15]
+          - text: Companies
+        - link "Contacts" [ref=e19] [cursor=pointer]:
+          - /url: /contacts
+          - img [ref=e20]
+          - text: Contacts
+        - link "Deals" [ref=e25] [cursor=pointer]:
+          - /url: /deals
+          - img [ref=e26]
+          - text: Deals
+        - link "Activities" [ref=e28] [cursor=pointer]:
+          - /url: /activities
+          - img [ref=e29]
+          - text: Activities
+        - link "Analytics" [ref=e32] [cursor=pointer]:
+          - /url: /analytics
+          - img [ref=e33]
+          - text: Analytics
+      - button "Sign Out" [ref=e37]:
+        - img [ref=e38]
+        - text: Sign Out
+    - main [ref=e41]:
+      - generic [ref=e42]:
+        - heading "Dashboard" [level=1] [ref=e43]
+        - generic [ref=e45]: JD
+      - generic [ref=e47]:
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - heading "Deals Pipeline" [level=2] [ref=e50]
+            - paragraph [ref=e51]: Track and manage your opportunities.
+          - button "New Deal" [ref=e52]:
+            - img [ref=e53]
+            - text: New Deal
+        - generic [ref=e54]:
+          - textbox "Min Value (e.g. 1000)" [active] [ref=e56]: "1000"
+          - combobox [ref=e57]:
+            - option "All Stages" [selected]
+            - option "Lead"
+            - option "Qualified"
+            - option "Proposal"
+            - option "Negotiation"
+            - option "Won"
+        - generic [ref=e58]:
+          - heading "Lead" [level=3] [ref=e61]
+          - heading "Qualified" [level=3] [ref=e69]
+          - heading "Proposal" [level=3] [ref=e77]
+          - heading "Negotiation" [level=3] [ref=e85]
+          - heading "Won" [level=3] [ref=e93]
+  - region "Notifications alt+T"
+```

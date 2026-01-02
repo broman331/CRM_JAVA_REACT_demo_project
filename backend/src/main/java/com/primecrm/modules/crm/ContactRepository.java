@@ -15,4 +15,11 @@ public interface ContactRepository extends JpaRepository<Contact, UUID>,
     @Override
     @org.springframework.lang.NonNull
     List<Contact> findAll();
+
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = "company")
+    @org.springframework.data.jpa.repository.Query("SELECT c FROM Contact c WHERE " +
+            "LOWER(c.firstName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(c.lastName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(c.email) LIKE LOWER(CONCAT('%', :query, '%'))")
+    List<Contact> searchGlobal(@org.springframework.web.bind.annotation.RequestParam("query") String query);
 }

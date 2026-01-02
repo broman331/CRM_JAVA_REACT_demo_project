@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { crmApi } from './crm-api';
+import { crmApi, Company } from './crm-api';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import {
@@ -14,7 +14,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '../../components/ui/Dialog';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const companySchema = z.object({
     name: z.string().min(1, 'Company name is required'),
@@ -25,14 +25,16 @@ const companySchema = z.object({
 
 type CompanyFormValues = z.infer<typeof companySchema>;
 
-interface AddCompanyDialogProps {
+interface CompanyDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    companyToEdit?: Company | null;
 }
 
-export const AddCompanyDialog = ({ open, onOpenChange }: AddCompanyDialogProps) => {
+export const CompanyDialog = ({ open, onOpenChange, companyToEdit }: CompanyDialogProps) => {
     const queryClient = useQueryClient();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const isEditMode = !!companyToEdit;
 
     const {
         register,
@@ -49,16 +51,41 @@ export const AddCompanyDialog = ({ open, onOpenChange }: AddCompanyDialogProps) 
         },
     });
 
-    const createCompanyMutation = useMutation({
-        mutationFn: (data: CompanyFormValues) => crmApi.createCompany(data),
+    // Reset form when opening/closing or changing edit target
+    useEffect(() => {
+        if (open) {
+            if (companyToEdit) {
+                reset({
+                    name: companyToEdit.name,
+                    industry: companyToEdit.industry || '',
+                    website: companyToEdit.website || '',
+                    phone: companyToEdit.phone || '',
+                });
+            } else {
+                reset({
+                    name: '',
+                    industry: '',
+                    website: '',
+                    phone: '',
+                });
+            }
+        }
+    }, [open, companyToEdit, reset]);
+
+    const mutation = useMutation({
+        mutationFn: (data: CompanyFormValues) => {
+            if (isEditMode && companyToEdit) {
+                return crmApi.updateCompany(companyToEdit.id, data);
+            }
+            return crmApi.createCompany(data);
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['companies'] });
-            toast.success('Company created successfully');
-            reset();
+            toast.success(`Company ${isEditMode ? 'updated' : 'created'} successfully`);
             onOpenChange(false);
         },
         onError: () => {
-            toast.error('Failed to create company');
+            toast.error(`Failed to ${isEditMode ? 'update' : 'create'} company`);
         },
         onSettled: () => {
             setIsSubmitting(false);
@@ -67,19 +94,16 @@ export const AddCompanyDialog = ({ open, onOpenChange }: AddCompanyDialogProps) 
 
     const onSubmit = (data: CompanyFormValues) => {
         setIsSubmitting(true);
-        // Clean up empty strings for optional fields if necessary, 
-        // though backend likely handles it or Zod transforms could be used.
-        // For now, passing as is.
-        createCompanyMutation.mutate(data);
+        mutation.mutate(data);
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Add Company</DialogTitle>
+                    <DialogTitle>{isEditMode ? 'Edit Company' : 'Add Company'}</DialogTitle>
                     <DialogDescription>
-                        Create a new company record. Click save when you're done.
+                        {isEditMode ? 'Update company details.' : 'Create a new company record.'} Click save when you're done.
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">

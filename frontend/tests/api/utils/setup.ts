@@ -12,6 +12,12 @@ export const resetDatabase = async () => {
     if (!response.ok()) {
         throw new Error(`Failed to reset database: ${response.status()} ${response.statusText()} `);
     }
+
+    // Recreate admin user after database reset
+    const seedResponse = await apiContext.post('/api/test/seed-admin');
+    if (!seedResponse.ok()) {
+        throw new Error(`Failed to seed admin user: ${seedResponse.status()} ${seedResponse.statusText()}`);
+    }
 };
 
 export const createAuthenticatedContext = async () => {

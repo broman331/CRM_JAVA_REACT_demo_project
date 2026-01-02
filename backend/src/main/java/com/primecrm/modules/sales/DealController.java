@@ -26,6 +26,11 @@ public class DealController {
         return ResponseEntity.ok(dealService.createDeal(deal));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Deal> updateDeal(@PathVariable UUID id, @RequestBody @Valid Deal deal) {
+        return ResponseEntity.ok(dealService.updateDeal(id, deal));
+    }
+
     @PatchMapping("/{id}/stage")
     public ResponseEntity<Deal> updateStage(@PathVariable UUID id, @RequestParam Deal.DealStage stage) {
         return ResponseEntity.ok(dealService.updateStage(id, stage));

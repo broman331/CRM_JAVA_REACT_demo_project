@@ -1,0 +1,86 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e6]: PrimeCRM
+      - navigation [ref=e7]:
+        - link "Dashboard" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e9]
+          - text: Dashboard
+        - link "Companies" [ref=e14] [cursor=pointer]:
+          - /url: /companies
+          - img [ref=e15]
+          - text: Companies
+        - link "Contacts" [ref=e19] [cursor=pointer]:
+          - /url: /contacts
+          - img [ref=e20]
+          - text: Contacts
+        - link "Deals" [ref=e25] [cursor=pointer]:
+          - /url: /deals
+          - img [ref=e26]
+          - text: Deals
+        - link "Activities" [ref=e28] [cursor=pointer]:
+          - /url: /activities
+          - img [ref=e29]
+          - text: Activities
+        - link "Analytics" [ref=e32] [cursor=pointer]:
+          - /url: /analytics
+          - img [ref=e33]
+          - text: Analytics
+        - link "Admin" [ref=e36] [cursor=pointer]:
+          - /url: /admin
+          - img [ref=e37]
+          - text: Admin
+      - button "Sign Out" [ref=e40]:
+        - img [ref=e41]
+        - text: Sign Out
+    - main [ref=e44]:
+      - generic [ref=e45]:
+        - heading "Dashboard" [level=1] [ref=e46]
+        - generic [ref=e48]: JD
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - heading "Contacts" [level=2] [ref=e53]
+            - paragraph [ref=e54]: Manage your relationships and leads.
+          - button "Add Contact" [ref=e55]:
+            - img [ref=e56]
+            - text: Add Contact
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - img [ref=e59]
+            - textbox "Search contacts..." [ref=e63]
+          - button "Filter" [ref=e64]
+        - table [ref=e68]:
+          - rowgroup [ref=e69]:
+            - row "Name Company Role Email Actions" [ref=e70]:
+              - columnheader [ref=e71]
+              - columnheader "Name" [ref=e72]
+              - columnheader "Company" [ref=e73]
+              - columnheader "Role" [ref=e74]
+              - columnheader "Email" [ref=e75]
+              - columnheader "Actions" [ref=e76]
+          - rowgroup [ref=e77]:
+            - row "JD John Doe-ce41d7d2 - Manager john-ce41d7d2@example.com Open menu" [ref=e78]:
+              - cell [ref=e79]:
+                - button [ref=e80]:
+                  - img [ref=e81]
+              - cell "JD John Doe-ce41d7d2" [ref=e83]:
+                - generic [ref=e84]:
+                  - generic [ref=e85]: JD
+                  - text: John Doe-ce41d7d2
+              - cell "-" [ref=e86]
+              - cell "Manager" [ref=e87]
+              - cell "john-ce41d7d2@example.com" [ref=e88]:
+                - generic [ref=e89]:
+                  - img [ref=e90]
+                  - text: john-ce41d7d2@example.com
+              - cell "Open menu" [ref=e93]:
+                - button "Open menu" [ref=e94]:
+                  - generic [ref=e95]: Open menu
+                  - img [ref=e96]
+  - region "Notifications alt+T"
+```

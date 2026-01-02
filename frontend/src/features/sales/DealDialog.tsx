@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { dealsApi } from './deals-api';
+import { dealsApi, type Deal } from './deals-api';
 import { crmApi, type Contact } from '../crm/crm-api';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -15,7 +15,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '../../components/ui/Dialog';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const dealSchema = z.object({
     title: z.string().min(1, 'Title is required'),
@@ -28,14 +28,16 @@ const dealSchema = z.object({
 
 type DealFormValues = z.infer<typeof dealSchema>;
 
-interface AddDealDialogProps {
+interface DealDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    dealToEdit?: Deal | null;
 }
 
-export const AddDealDialog = ({ open, onOpenChange }: AddDealDialogProps) => {
+export const DealDialog = ({ open, onOpenChange, dealToEdit }: DealDialogProps) => {
     const queryClient = useQueryClient();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const isEditMode = !!dealToEdit;
 
     const { data: contacts } = useQuery({
         queryKey: ['contacts'],
@@ -57,16 +59,50 @@ export const AddDealDialog = ({ open, onOpenChange }: AddDealDialogProps) => {
         },
     });
 
-    const createDealMutation = useMutation({
-        mutationFn: (data: DealFormValues) => dealsApi.createDeal(data),
+    useEffect(() => {
+        if (open) {
+            if (dealToEdit) {
+                reset({
+                    title: dealToEdit.title,
+                    value: dealToEdit.value.toString(),
+                    contactId: dealToEdit.contact?.id || '',
+                    stage: dealToEdit.stage,
+                });
+            } else {
+                reset({
+                    title: '',
+                    value: '',
+                    contactId: '',
+                    stage: 'LEAD',
+                });
+            }
+        }
+    }, [open, dealToEdit, reset]);
+
+    const mutation = useMutation({
+        mutationFn: (data: DealFormValues) => {
+            const payload = {
+                title: data.title,
+                value: Number(data.value),
+                contactId: data.contactId,
+                stage: data.stage
+            };
+
+            if (isEditMode && dealToEdit) {
+                // For updates we might need a different payload structure or just ID
+                // Ideally API supports partial updates.
+                // Assuming updateDeal exists in api
+                return dealsApi.updateDeal(dealToEdit.id, payload);
+            }
+            return dealsApi.createDeal(payload);
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['deals'] });
-            toast.success('Deal created successfully');
-            reset();
+            toast.success(`Deal ${isEditMode ? 'updated' : 'created'} successfully`);
             onOpenChange(false);
         },
         onError: () => {
-            toast.error('Failed to create deal');
+            toast.error(`Failed to ${isEditMode ? 'update' : 'create'} deal`);
         },
         onSettled: () => {
             setIsSubmitting(false);
@@ -75,16 +111,16 @@ export const AddDealDialog = ({ open, onOpenChange }: AddDealDialogProps) => {
 
     const onSubmit: SubmitHandler<DealFormValues> = (data) => {
         setIsSubmitting(true);
-        createDealMutation.mutate(data);
+        mutation.mutate(data);
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>New Deal</DialogTitle>
+                    <DialogTitle>{isEditMode ? 'Edit Deal' : 'New Deal'}</DialogTitle>
                     <DialogDescription>
-                        Create a new deal opportunity.
+                        {isEditMode ? 'Update deal details.' : 'Create a new deal opportunity.'}
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
@@ -124,6 +160,24 @@ export const AddDealDialog = ({ open, onOpenChange }: AddDealDialogProps) => {
                             <p className="mt-1 text-sm text-red-500">{errors.contactId.message}</p>
                         )}
                     </div>
+                    {!isEditMode && (
+                        /* Only show stage selection on creation, or allow editing if needed. 
+                           Kanban usually handles stage moves, but editing properties is fine. */
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-slate-300 mb-1">Stage</label>
+                            <select
+                                className="flex h-10 w-full rounded-md border border-slate-700 bg-surface px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                {...register('stage')}
+                            >
+                                <option value="LEAD">Lead</option>
+                                <option value="QUALIFIED">Qualified</option>
+                                <option value="PROPOSAL">Proposal</option>
+                                <option value="NEGOTIATION">Negotiation</option>
+                                <option value="CLOSED_WON">Closed Won</option>
+                            </select>
+                        </div>
+                    )}
+
                     <DialogFooter>
                         <Button
                             type="button"
@@ -134,7 +188,7 @@ export const AddDealDialog = ({ open, onOpenChange }: AddDealDialogProps) => {
                             Cancel
                         </Button>
                         <Button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? 'Create Deal' : 'Create Deal'}
+                            {isSubmitting ? 'Saving...' : (isEditMode ? 'Update Deal' : 'Create Deal')}
                         </Button>
                     </DialogFooter>
                 </form>

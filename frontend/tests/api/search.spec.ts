@@ -4,6 +4,7 @@ import { generateDeal } from './utils/seeds';
 
 test.describe('Search API', () => {
     let apiContext: APIRequestContext;
+    let contactId: string;
 
     test.beforeAll(async () => {
         await resetDatabase();

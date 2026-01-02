@@ -3,8 +3,10 @@ import { api } from '../../lib/api';
 export interface Deal {
     id: string;
     title: string;
-    value: string;
+    value: number;
     companyName: string; // Flattened for display
+    contact?: { id: string; firstName: string; lastName: string };
+    contactId?: string; // For creation/updates
     stage: 'LEAD' | 'QUALIFIED' | 'PROPOSAL' | 'NEGOTIATION' | 'CLOSED_WON';
 }
 
@@ -17,6 +19,11 @@ export const dealsApi = {
 
     createDeal: async (deal: Partial<Deal>) => {
         const response = await api.post('/deals', deal);
+        return response.data;
+    },
+
+    updateDeal: async (id: string, deal: Partial<Deal>) => {
+        const response = await api.put(`/deals/${id}`, deal);
         return response.data;
     },
 

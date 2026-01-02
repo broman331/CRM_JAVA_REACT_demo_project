@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { crmApi, type Company } from './crm-api';
+import { crmApi, type Company, type Contact } from './crm-api';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import {
@@ -14,7 +14,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '../../components/ui/Dialog';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const contactSchema = z.object({
     firstName: z.string().min(1, 'First name is required'),
@@ -27,14 +27,16 @@ const contactSchema = z.object({
 
 type ContactFormValues = z.infer<typeof contactSchema>;
 
-interface AddContactDialogProps {
+interface ContactDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    contactToEdit?: Contact | null;
 }
 
-export const AddContactDialog = ({ open, onOpenChange }: AddContactDialogProps) => {
+export const ContactDialog = ({ open, onOpenChange, contactToEdit }: ContactDialogProps) => {
     const queryClient = useQueryClient();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const isEditMode = !!contactToEdit;
 
     const { data: companies } = useQuery({
         queryKey: ['companies'],
@@ -58,16 +60,48 @@ export const AddContactDialog = ({ open, onOpenChange }: AddContactDialogProps) 
         },
     });
 
-    const createContactMutation = useMutation({
-        mutationFn: (data: ContactFormValues) => crmApi.createContact(data),
+    useEffect(() => {
+        if (open) {
+            if (contactToEdit) {
+                reset({
+                    firstName: contactToEdit.firstName,
+                    lastName: contactToEdit.lastName,
+                    email: contactToEdit.email,
+                    phone: contactToEdit.phone || '',
+                    jobTitle: contactToEdit.jobTitle || '',
+                    companyId: contactToEdit.company?.id || '',
+                });
+            } else {
+                reset({
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phone: '',
+                    jobTitle: '',
+                    companyId: '',
+                });
+            }
+        }
+    }, [open, contactToEdit, reset]);
+
+    const mutation = useMutation({
+        mutationFn: (data: ContactFormValues) => {
+            const payload = {
+                ...data,
+                companyId: data.companyId || undefined
+            };
+            if (isEditMode && contactToEdit) {
+                return crmApi.updateContact(contactToEdit.id, payload);
+            }
+            return crmApi.createContact(payload);
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['contacts'] });
-            toast.success('Contact created successfully');
-            reset();
+            toast.success(`Contact ${isEditMode ? 'updated' : 'created'} successfully`);
             onOpenChange(false);
         },
         onError: () => {
-            toast.error('Failed to create contact');
+            toast.error(`Failed to ${isEditMode ? 'update' : 'create'} contact`);
         },
         onSettled: () => {
             setIsSubmitting(false);
@@ -76,21 +110,16 @@ export const AddContactDialog = ({ open, onOpenChange }: AddContactDialogProps) 
 
     const onSubmit = (data: ContactFormValues) => {
         setIsSubmitting(true);
-        // If companyId is empty string "Select a company", send undefined or null
-        const payload = {
-            ...data,
-            companyId: data.companyId || undefined
-        };
-        createContactMutation.mutate(payload);
+        mutation.mutate(data);
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Add Contact</DialogTitle>
+                    <DialogTitle>{isEditMode ? 'Edit Contact' : 'Add Contact'}</DialogTitle>
                     <DialogDescription>
-                        Create a new contact. Click save when you're done.
+                        {isEditMode ? 'Update contact details.' : 'Create a new contact.'} Click save when you're done.
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">

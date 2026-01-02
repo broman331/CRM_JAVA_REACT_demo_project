@@ -6,7 +6,7 @@ test.describe('Entity Actions (Edit/Delete)', () => {
         await page.goto('/login');
         await page.locator('input[name="email"]').fill('admin@example.com');
         await page.locator('input[name="password"]').fill('admin123');
-        await page.getByRole('button', { name: 'Sign in' }).click();
+        await page.getByRole('button', { name: 'Sign In' }).click();
         await page.waitForURL('**/dashboard');
     });
 
@@ -16,29 +16,36 @@ test.describe('Entity Actions (Edit/Delete)', () => {
         await page.getByRole('button', { name: 'Add Company' }).click();
         await page.locator('input[name="name"]').fill('Action Test Company');
         await page.locator('input[name="industry"]').fill('Testing');
-        await page.getByRole('button', { name: 'Create Company' }).click();
+        await page.getByRole('button', { name: 'Save changes' }).click();
         await expect(page.getByText('Action Test Company')).toBeVisible();
 
         // 2. Edit the company
         await page.getByRole('row', { name: 'Action Test Company' })
-            .getByRole('button', { name: /open actions/i }) // Assuming aria-label or text on trigger
-            .click();
-
-        // Note: Edit is currently a toast placeholder, verified by toast appearance
-        await page.getByRole('menuitem', { name: 'Edit' }).click();
-        await expect(page.getByText('Edit coming soon')).toBeVisible();
-
-        // 3. Delete the company
-        await page.getByRole('row', { name: 'Action Test Company' })
             .getByRole('button', { name: /open actions/i })
             .click();
 
-        // Setup listener for dialog or just click if it's direct (current implementation has no confirmation dialog for delete, strictly speaking based on previous code, but let's check)
-        // Checking CompaniesPage.tsx: deleteMutation.mutate(company.id) is called directly.
+        await page.getByRole('menuitem', { name: 'Edit' }).click();
+
+        // Check pre-filled and update
+        const dialog = page.getByRole('dialog', { name: 'Edit Company' });
+        await expect(dialog).toBeVisible();
+        await expect(dialog.locator('input[name="name"]')).toHaveValue('Action Test Company');
+
+        await dialog.locator('input[name="name"]').fill('Updated Company Name');
+        await dialog.getByRole('button', { name: 'Save changes' }).click();
+
+        await expect(page.getByText('Company updated successfully')).toBeVisible();
+        await expect(page.getByText('Updated Company Name')).toBeVisible();
+
+        // 3. Delete the company
+        await page.getByRole('row', { name: 'Updated Company Name' })
+            .getByRole('button', { name: /open actions/i })
+            .click();
+
         await page.getByRole('menuitem', { name: 'Delete' }).click();
 
         await expect(page.getByText('Company deleted')).toBeVisible();
-        await expect(page.getByText('Action Test Company')).not.toBeVisible();
+        await expect(page.getByText('Updated Company Name')).not.toBeVisible();
     });
 
     test('should edit and delete an activity', async ({ page }) => {
@@ -48,41 +55,51 @@ test.describe('Entity Actions (Edit/Delete)', () => {
         await page.getByRole('button', { name: 'New Activity' }).click();
         await page.locator('input[name="subject"]').fill('Delete Me Activity');
         await page.locator('select[name="type"]').selectOption('CALL');
-        // Select date (defaults to today/now usually works)
-        await page.getByRole('button', { name: 'Save Activity' }).click();
+
+        // Ensure date is set (required field)
+        // Playwright fill for date input requires specific format depending on locale/browser, 
+        // but often YYYY-MM-DDTHH:mm works for datetime-local
+        // Or simpler, just ensure we can submit if default is handled or we fill it.
+        // ActivityDialog doesn't set default date on create, so we must set it.
+        // Actually, let's check ActivityDialog logic. If it's required, we must fill it.
+
+        // To be safe, let's fill it.
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0, 16);
+        await page.locator('input[name="dueDate"]').fill(dateStr);
+
+        await page.getByRole('button', { name: 'Create Activity' }).click();
         await expect(page.getByText('Delete Me Activity')).toBeVisible();
 
         // 2. Edit activity
         // Find the specific card's action menu
-        const activityCard = page.getByText('Delete Me Activity').locator('..').locator('..'); // Adjust selector based on structure
-        // Actually, ActivitiesPage renders ActionsMenu in a div. 
-        // Let's target by text closeness.
-        await page.locator('div').filter({ hasText: 'Delete Me Activity' }).last()
-            .getByRole('button').last() // The actions menu trigger is likely the last button
-            .click();
+        // ActivitiesPage renders ActionsMenu in a div. Target by text.
+        // We look for the card containing the text, then find the button inside it.
+        // Using filter to be precise.
+        const card = page.locator('div.border.bg-surface').filter({ hasText: 'Delete Me Activity' }).last();
+        await card.getByRole('button', { name: /open actions/i }).click();
 
         await page.getByRole('menuitem', { name: 'Edit' }).click();
-        await expect(page.getByRole('dialog', { name: 'Edit Activity' })).toBeVisible();
+
+        const dialog = page.locator('div[role="dialog"]'); // ActivityDialog doesn't have role="dialog" explicitly on Card? 
+        // It says <div className="fixed inset-0 ..."><Card ...>... <CardTitle>Edit Activity</CardTitle>
+        // It doesn't use the Radix Dialog component, it uses a custom implementation. 
+        // So we might not find it by role 'dialog'. Let's look for text.
+        await expect(page.getByText('Edit Activity')).toBeVisible();
+
         await page.locator('input[name="subject"]').fill('Updated Activity Name');
         await page.getByRole('button', { name: 'Save Changes' }).click();
 
-        await expect(page.getByText('Activity updated')).toBeVisible();
+        await expect(page.getByText('Activity updated', { exact: false })).toBeVisible(); // Toast
         await expect(page.getByText('Updated Activity Name')).toBeVisible();
 
         // 3. Delete activity
-        await page.locator('div').filter({ hasText: 'Updated Activity Name' }).last()
-            .getByRole('button').last()
-            .click();
+        const updatedCard = page.locator('div.border.bg-surface').filter({ hasText: 'Updated Activity Name' }).last();
+        await updatedCard.getByRole('button', { name: /open actions/i }).click();
 
         await page.getByRole('menuitem', { name: 'Delete' }).click();
 
-        // Current implementation in ActivityDialog/Page might use a confirmation or direct delete?
-        // ActivitiesPage.tsx has deleteMutation.mutate(id) directly in onConfirm? 
-        // Wait, ActivitiesPage.tsx passes onDelete to ActionsMenu. ActionsMenu calls it directly.
-        // Wait, previously I saw "Delete Activity: Confirmation dialog" in roadmap.
-        // Let's re-read ActivitiesPage.tsx if needed. Assuming direct delete for now as per other pages.
-
-        await expect(page.getByText('Activity deleted')).toBeVisible();
+        await expect(page.getByText('Activity deleted', { exact: false })).toBeVisible();
         await expect(page.getByText('Updated Activity Name')).not.toBeVisible();
     });
 });

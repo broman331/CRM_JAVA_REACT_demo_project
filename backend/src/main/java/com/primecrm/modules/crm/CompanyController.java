@@ -30,6 +30,18 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.createCompany(company));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Company> updateCompany(@PathVariable UUID id, @RequestBody @Valid Company company) {
+        return ResponseEntity.ok(companyService.updateCompany(id, company));
+    }
+
+    @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteCompany(@PathVariable UUID id) {
+        companyService.deleteCompany(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{id}/contacts")
     public ResponseEntity<List<Contact>> getCompanyContacts(@PathVariable UUID id) {
         return ResponseEntity.ok(companyService.getContactsByCompany(id));

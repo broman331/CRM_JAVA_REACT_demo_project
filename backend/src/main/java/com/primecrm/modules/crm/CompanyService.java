@@ -35,4 +35,26 @@ public class CompanyService {
         }
         return contactRepository.findByCompanyId(companyId);
     }
+
+    @Transactional
+    public Company updateCompany(@lombok.NonNull UUID id, @lombok.NonNull Company company) {
+        Company existing = getCompany(id);
+        if (company.getName() != null)
+            existing.setName(company.getName());
+        if (company.getIndustry() != null)
+            existing.setIndustry(company.getIndustry());
+        if (company.getWebsite() != null)
+            existing.setWebsite(company.getWebsite());
+        if (company.getPhone() != null)
+            existing.setPhone(company.getPhone());
+        return java.util.Objects.requireNonNull(companyRepository.save(existing));
+    }
+
+    @Transactional
+    public void deleteCompany(@lombok.NonNull UUID id) {
+        if (!companyRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Company not found with id: " + id);
+        }
+        companyRepository.deleteById(id);
+    }
 }

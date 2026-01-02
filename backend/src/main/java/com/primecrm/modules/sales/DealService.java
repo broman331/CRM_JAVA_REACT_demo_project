@@ -43,6 +43,20 @@ public class DealService {
         return dealRepository.save(deal);
     }
 
+    @Transactional
+    public Deal updateDeal(@lombok.NonNull UUID id, @lombok.NonNull Deal deal) {
+        Deal existing = dealRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Deal not found"));
+        if (deal.getTitle() != null)
+            existing.setTitle(deal.getTitle());
+        if (deal.getValue() != null)
+            existing.setValue(deal.getValue());
+        if (deal.getContactId() != null)
+            existing.setContactId(deal.getContactId());
+        // Note: stage updates should use updateStage endpoint, not general update
+        return java.util.Objects.requireNonNull(dealRepository.save(existing));
+    }
+
     public long countDeals() {
         return dealRepository.count();
     }

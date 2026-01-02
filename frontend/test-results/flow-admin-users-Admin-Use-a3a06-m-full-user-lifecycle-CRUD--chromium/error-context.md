@@ -1,0 +1,115 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e6]: PrimeCRM
+      - navigation [ref=e7]:
+        - link "Dashboard" [ref=e8] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e9]
+          - text: Dashboard
+        - link "Companies" [ref=e14] [cursor=pointer]:
+          - /url: /companies
+          - img [ref=e15]
+          - text: Companies
+        - link "Contacts" [ref=e19] [cursor=pointer]:
+          - /url: /contacts
+          - img [ref=e20]
+          - text: Contacts
+        - link "Deals" [ref=e25] [cursor=pointer]:
+          - /url: /deals
+          - img [ref=e26]
+          - text: Deals
+        - link "Activities" [ref=e28] [cursor=pointer]:
+          - /url: /activities
+          - img [ref=e29]
+          - text: Activities
+        - link "Analytics" [ref=e32] [cursor=pointer]:
+          - /url: /analytics
+          - img [ref=e33]
+          - text: Analytics
+        - link "Admin" [ref=e36] [cursor=pointer]:
+          - /url: /admin
+          - img [ref=e37]
+          - text: Admin
+      - button "Sign Out" [ref=e40]:
+        - img [ref=e41]
+        - text: Sign Out
+    - main [ref=e44]:
+      - generic [ref=e45]:
+        - heading "Dashboard" [level=1] [ref=e46]
+        - generic [ref=e48]: JD
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - heading "Admin Settings" [level=2] [ref=e53]
+            - paragraph [ref=e54]: Manage system settings and users.
+          - button "New User" [active] [ref=e55]:
+            - img [ref=e56]
+            - text: New User
+        - generic [ref=e58]:
+          - button [ref=e59]:
+            - img [ref=e60]
+          - heading "New User" [level=3] [ref=e64]
+          - generic [ref=e66]:
+            - generic [ref=e67]:
+              - generic [ref=e68]:
+                - generic [ref=e69]: First Name
+                - textbox [ref=e70]
+              - generic [ref=e71]:
+                - generic [ref=e72]: Last Name
+                - textbox [ref=e73]
+            - generic [ref=e74]:
+              - generic [ref=e75]: Email
+              - textbox [ref=e76]
+            - generic [ref=e77]:
+              - generic [ref=e78]: Password
+              - textbox [ref=e79]
+            - generic [ref=e80]:
+              - text: Role
+              - generic [ref=e81]:
+                - combobox [ref=e82]:
+                  - option "Sales Representative" [selected]
+                  - option "Administrator"
+                - img
+            - generic [ref=e83]:
+              - button "Cancel" [ref=e84]
+              - button "Create User" [ref=e85]
+        - table [ref=e89]:
+          - rowgroup [ref=e90]:
+            - row "Name Email Role Actions" [ref=e91]:
+              - columnheader "Name" [ref=e92]
+              - columnheader "Email" [ref=e93]
+              - columnheader "Role" [ref=e94]
+              - columnheader "Actions" [ref=e95]
+          - rowgroup [ref=e96]:
+            - row "Admin User admin@example.com ADMIN Open menu" [ref=e97]:
+              - cell "Admin User" [ref=e98]:
+                - generic [ref=e99]:
+                  - img [ref=e101]
+                  - text: Admin User
+              - cell "admin@example.com" [ref=e104]
+              - cell "ADMIN" [ref=e105]:
+                - generic [ref=e106]:
+                  - img [ref=e107]
+                  - text: ADMIN
+              - cell "Open menu" [ref=e109]:
+                - button "Open menu" [ref=e110]:
+                  - generic [ref=e111]: Open menu
+                  - img [ref=e112]
+            - row "Test User-991c588b user-991c588b@example.com SALES_REP Open menu" [ref=e116]:
+              - cell "Test User-991c588b" [ref=e117]:
+                - generic [ref=e118]:
+                  - img [ref=e120]
+                  - text: Test User-991c588b
+              - cell "user-991c588b@example.com" [ref=e123]
+              - cell "SALES_REP" [ref=e124]:
+                - generic [ref=e125]: SALES_REP
+              - cell "Open menu" [ref=e126]:
+                - button "Open menu" [ref=e127]:
+                  - generic [ref=e128]: Open menu
+                  - img [ref=e129]
+  - region "Notifications alt+T"
+```

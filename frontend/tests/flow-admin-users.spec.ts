@@ -5,7 +5,7 @@ test.describe('Admin User Management', () => {
         await page.goto('/login');
         await page.locator('input[name="email"]').fill('admin@example.com');
         await page.locator('input[name="password"]').fill('admin123');
-        await page.getByRole('button', { name: 'Sign in' }).click();
+        await page.getByRole('button', { name: 'Sign In' }).click();
         await page.waitForURL('**/dashboard');
         await page.goto('/admin');
     });

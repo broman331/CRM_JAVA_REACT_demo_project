@@ -41,6 +41,11 @@ export const crmApi = {
         return response.data;
     },
 
+    updateContact: async (id: string, contact: Partial<Contact>) => {
+        const response = await api.put(`/contacts/${id}`, contact);
+        return response.data;
+    },
+
     // Company API
     getCompanies: async (search?: string) => {
         const params = search ? { search } : {};
@@ -54,6 +59,10 @@ export const crmApi = {
     },
     getCompany: async (id: string) => {
         const response = await api.get(`/companies/${id}`);
+        return response.data;
+    },
+    updateCompany: async (id: string, data: Partial<Company>) => {
+        const response = await api.put(`/companies/${id}`, data);
         return response.data;
     },
     deleteCompany: async (id: string) => {

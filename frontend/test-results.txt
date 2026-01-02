@@ -1,0 +1,114 @@
+
+Running 68 tests using 1 worker
+
+[1A[2K[1/68] [chromium] › tests/api/activities.spec.ts:23:5 › Activities API › should create an activity
+[1A[2K[2/68] [chromium] › tests/api/activities.spec.ts:32:5 › Activities API › should complete an activity
+[1A[2K[3/68] [chromium] › tests/api/analytics.spec.ts:53:5 › Analytics API › should return revenue stats
+[1A[2K[4/68] [chromium] › tests/api/analytics.spec.ts:62:5 › Analytics API › should return pipeline distribution
+[1A[2K[5/68] [chromium] › tests/api/analytics.spec.ts:72:5 › Analytics API › should return activity volume
+[1A[2K[6/68] [chromium] › tests/api/auth.spec.ts:10:5 › Auth API › should register a new user
+[1A[2K[7/68] [chromium] › tests/api/auth.spec.ts:23:5 › Auth API › should login successfully
+[1A[2K[8/68] [chromium] › tests/api/auth.spec.ts:38:5 › Auth API › should fail login with wrong password
+[1A[2K[9/68] [chromium] › tests/api/companies.spec.ts:15:5 › Companies API › should create and retrieve a company
+[1A[2K[10/68] [chromium] › tests/api/companies.spec.ts:31:5 › Companies API › should list all companies
+[1A[2K[11/68] [chromium] › tests/api/contacts.spec.ts:14:5 › Contacts API › should create and retrieve a contact
+[1A[2K[12/68] [chromium] › tests/api/contacts.spec.ts:33:5 › Contacts API › should list all contacts
+[1A[2K[13/68] [chromium] › tests/api/dashboard.spec.ts:15:5 › Dashboard API › should return correct stats
+[1A[2K[14/68] [chromium] › tests/api/deals.spec.ts:24:5 › Deals API › should create a deal
+[1A[2K[15/68] [chromium] › tests/api/deals.spec.ts:33:5 › Deals API › should update deal stage
+[1A[2K[16/68] [chromium] › tests/api/rbac.spec.ts:43:5 › RBAC API Security › Standard User cannot delete contact (403)
+[1A[2K[17/68] [chromium] › tests/api/rbac.spec.ts:50:5 › RBAC API Security › Admin can delete contact (204)
+[1A[2K[18/68] [chromium] › tests/api/rbac.spec.ts:57:5 › RBAC API Security › Standard User cannot delete other entities (403)
+[1A[2K[19/68] [chromium] › tests/api/search.spec.ts:37:5 › Search API › should search contacts by name (equality)
+[1A[2K[20/68] [chromium] › tests/api/search.spec.ts:45:5 › Search API › should search contacts by partial match (if implemented strings use like)
+[1A[2K[21/68] [chromium] › tests/api/search.spec.ts:54:5 › Search API › should search deals by greater than value
+[1A[2K[22/68] [chromium] › tests/api/search.spec.ts:62:5 › Search API › should search deals by less than value
+[1A[2K[23/68] [chromium] › tests/api/search.spec.ts:70:5 › Search API › should fail gracefully or return empty for no match
+[1A[2K[24/68] [chromium] › tests/api/timeline.spec.ts:16:5 › Timeline API › should fetch timeline for a contact
+[1A[2K[25/68] [chromium] › tests/api/timeline.spec.ts:54:5 › Timeline API › should fetch timeline for a deal
+[1A[2K[26/68] [chromium] › tests/api/timeline.spec.ts:96:5 › Timeline API › should return empty list for invalid entity type
+[1A[2K[27/68] [chromium] › tests/bug-search.spec.ts:12:5 › Search Debounce & UX › should explicitly wait for debounce before filtering
+[1A[2K  1) [chromium] › tests/bug-search.spec.ts:12:5 › Search Debounce & UX › should explicitly wait for debounce before filtering 
+
+    [31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Search Debounce & UX', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/login');
+      6 |         await page.locator('input[name="email"]').fill('admin@example.com');
+      7 |         await page.locator('input[name="password"]').fill('admin123');
+        at /Users/broman/Documents/zz_QA_Projects/project 004/frontend/tests/bug-search.spec.ts:4:10
+
+    Error: page.waitForURL: Test timeout of 60000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation to "**/dashboard" until "load"
+    ============================================================
+
+       7 |         await page.locator('input[name="password"]').fill('admin123');
+       8 |         await page.getByRole('button', { name: 'Sign in' }).click();
+    >  9 |         await page.waitForURL('**/dashboard');
+         |                    ^
+      10 |     });
+      11 |
+      12 |     test('should explicitly wait for debounce before filtering', async ({ page }) => {
+        at /Users/broman/Documents/zz_QA_Projects/project 004/frontend/tests/bug-search.spec.ts:9:20
+
+    Error Context: test-results/bug-search-Search-Debounce-ee60d-r-debounce-before-filtering-chromium/error-context.md
+
+
+[1A[2K[28/68] [chromium] › tests/flow-actions.spec.ts:13:5 › Entity Actions (Edit/Delete) › should edit and delete a company
+[1A[2K  2) [chromium] › tests/flow-actions.spec.ts:13:5 › Entity Actions (Edit/Delete) › should edit and delete a company 
+
+    [31mTest timeout of 60000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Entity Actions (Edit/Delete)', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         // Login as admin
+      6 |         await page.goto('/login');
+      7 |         await page.locator('input[name="email"]').fill('admin@example.com');
+        at /Users/broman/Documents/zz_QA_Projects/project 004/frontend/tests/flow-actions.spec.ts:4:10
+
+    Error: page.waitForURL: Test timeout of 60000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation to "**/dashboard" until "load"
+    ============================================================
+
+       8 |         await page.locator('input[name="password"]').fill('admin123');
+       9 |         await page.getByRole('button', { name: 'Sign in' }).click();
+    > 10 |         await page.waitForURL('**/dashboard');
+         |                    ^
+      11 |     });
+      12 |
+      13 |     test('should edit and delete a company', async ({ page }) => {
+        at /Users/broman/Documents/zz_QA_Projects/project 004/frontend/tests/flow-actions.spec.ts:10:20
+
+    Error Context: test-results/flow-actions-Entity-Action-90e1e-d-edit-and-delete-a-company-chromium/error-context.md
+
+
+[1A[2K[29/68] [chromium] › tests/flow-actions.spec.ts:51:5 › Entity Actions (Edit/Delete) › should edit and delete an activity
+[1A[2K  3) [chromium] › tests/flow-actions.spec.ts:51:5 › Entity Actions (Edit/Delete) › should edit and delete an activity 
+
+    [31mTest timeout of 60000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('div.border.bg-surface').filter({ hasText: 'Delete Me Activity' }).last().getByRole('button', { name: /open actions/i })[22m
+
+
+      78 |         // Using filter to be precise.
+      79 |         const card = page.locator('div.border.bg-surface').filter({ hasText: 'Delete Me Activity' }).last();
+    > 80 |         await card.getByRole('button', { name: /open actions/i }).click();
+         |                                                                   ^
+      81 |
+      82 |         await page.getByRole('menuitem', { name: 'Edit' }).click();
+      83 |
+        at /Users/broman/Documents/zz_QA_Projects/project 004/frontend/tests/flow-actions.spec.ts:80:67
+
+    Error Context: test-results/flow-actions-Entity-Action-ff39f-edit-and-delete-an-activity-chromium/error-context.md
+
+
+[1A[2K[30/68] [chromium] › tests/flow-admin-users.spec.ts:13:5 › Admin User Management › should perform full user lifecycle (CRUD)
